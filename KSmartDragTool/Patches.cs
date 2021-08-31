@@ -28,6 +28,12 @@ namespace KSmartDragTool
             {
 
                 
+                Patches._panRight = false;
+                Patches._panLeft = false;
+                Patches._panUp = false;
+                Patches._panDown = false;
+
+
                 if (!___dragging)
                     return;
 
@@ -39,11 +45,6 @@ namespace KSmartDragTool
                 mousePos = Vector3.Min((Vector3)ClusterManager.Instance.activeWorld.maximumBounds, mousePos);
                 mousePos = Camera.main.WorldToViewportPoint(mousePos);
 
-
-                Patches._panRight = false;
-                Patches._panLeft = false;
-                Patches._panUp = false;
-                Patches._panDown = false;
 
 
                 if (mousePos.x > 0.95f)
@@ -123,30 +124,34 @@ namespace KSmartDragTool
             }
         }
 
+        /*
         [HarmonyPatch(typeof(DragTool))]
-        [HarmonyPatch("OnLeftClickUp")]
-        public class DragTool_OnLeftClickUp_Patch
+        [HarmonyPatch("OnKeyUp")]
+        public class DragTool_OnKeyUp_Patch
         {
 
-            public static void Postfix()
+            public static void Prefix(KButtonEvent e)
             {
-
-                Patches._panRight = false;
-                Patches._panLeft = false;
-                Patches._panUp = false;
-                Patches._panDown = false;
-                Patches._isMousePanning = false;
+                
+                    Patches._panRight = false;
+                    Patches._panLeft = false;
+                    Patches._panUp = false;
+                    Patches._panDown = false;
+                    Patches._isMousePanning = false;
+                
 
             }
 
         }
+        */
 
-        [HarmonyPatch(typeof(DragTool))]
-        [HarmonyPatch("OnRightClickUp")]
-        public class DragTool_OnRightClickUp_Patch
+
+        [HarmonyPatch(typeof(PlayerController))]
+        [HarmonyPatch("StopDrag")]
+        public class PlayerController_StopDrag_Patch
         {
 
-            public static void Postfix()
+            public static void Prefix()
             {
 
                 Patches._panRight = false;
@@ -154,6 +159,7 @@ namespace KSmartDragTool
                 Patches._panUp = false;
                 Patches._panDown = false;
                 Patches._isMousePanning = false;
+
 
             }
 
