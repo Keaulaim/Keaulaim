@@ -10,12 +10,92 @@ namespace KSmartDragTool
     public class Patches
     {
 
-
         public static bool _panLeft;
         public static bool _panRight;
         public static bool _panUp;
         public static bool _panDown;
         public static bool _isMousePanning;
+
+        public static bool _isLogged = false;
+
+        public static Guid areaVisText;
+
+
+        [HarmonyPatch(typeof(DragTool))]
+        [HarmonyPatch("OnLeftClickUp")]
+        public class DragTool_OnLeftClickUp_Patch
+        {
+
+            public static void Prefix()
+            {
+
+                areaVisText = Guid.Empty;
+
+            }
+
+
+        }
+
+        [HarmonyPatch(typeof(DragTool))]
+        [HarmonyPatch("OnDeactivateTool")]
+        public class DragTool_OnDeactivateTool_Patch
+        {
+
+            public static void Prefix()
+            {
+
+                areaVisText = Guid.Empty;
+
+            }
+
+
+        }
+
+
+        [HarmonyPatch(typeof(DragTool))]
+        [HarmonyPatch("CancelDragging")]
+        public class DragTool_CancelDragging_Patch
+        {
+
+            public static void Prefix()
+            {
+
+                areaVisText = Guid.Empty;
+
+            }
+
+
+        }
+
+
+
+        [HarmonyPatch(typeof(DragTool))]
+        [HarmonyPatch("OnLeftClickDown")]
+        public class DragTool_OnLeftClickDown_Patch
+        {
+
+            public static void Postfix(ref Guid ___areaVisualizerText)
+            {
+
+                if (___areaVisualizerText != Guid.Empty)
+                {
+
+
+                    // Changement de la couleur 
+                    LocText component = NameDisplayScreen.Instance.GetWorldText(___areaVisualizerText).GetComponent<LocText>();
+
+                    float H, S, V;
+
+                    Color.RGBToHSV(component.color, out H, out S, out V);
+                    component.color = Color.HSVToRGB(H, S, V - 0.5f);
+
+
+                }
+
+            }
+
+        }
+
 
 
         [HarmonyPatch(typeof(DragTool))]
@@ -23,11 +103,11 @@ namespace KSmartDragTool
         public class DragTool_OnMouseMove_Patch
         {
 
-
-            public static void Postfix(Vector3 ___previousCursorPos, Vector3 ___downPos, Guid ___areaVisualizerText, bool ___dragging)
+            public static void Postfix(Vector3 ___previousCursorPos, Vector3 ___downPos, ref Guid ___areaVisualizerText, bool ___dragging)
             {
 
-                
+
+                // Reset du cache
                 Patches._panRight = false;
                 Patches._panLeft = false;
                 Patches._panUp = false;
@@ -46,7 +126,7 @@ namespace KSmartDragTool
                 mousePos = Camera.main.WorldToViewportPoint(mousePos);
 
 
-
+                // Mise en cache du panning
                 if (mousePos.x > 0.95f)
                 {
                     Patches._panRight = true;
@@ -72,10 +152,13 @@ namespace KSmartDragTool
 
                 // --- Recadrage du texte ---
 
+
+                areaVisText = ___areaVisualizerText;
+
                 if (___areaVisualizerText != Guid.Empty)
                 {
+                                        
 
-                    // Changement de la police
                     LocText component = NameDisplayScreen.Instance.GetWorldText(___areaVisualizerText).GetComponent<LocText>();
 
 
@@ -214,6 +297,50 @@ namespace KSmartDragTool
                     ___panDown = __state.d;
 
                 }
+
+
+                if (areaVisText != Guid.Empty)
+                {
+
+                    // Changement de la police
+                    LocText component = NameDisplayScreen.Instance.GetWorldText(areaVisText).GetComponent<LocText>();
+
+                    /*
+                    if(!_isLogged)
+                    {
+
+                        Debug.Log(component.minHeight);
+                        Debug.Log(component.maxHeight);
+                        Debug.Log(component.preferredHeight);
+                        Debug.Log(component.flexibleHeight);
+                        Debug.Log(component.minWidth);
+                        Debug.Log(component.maxWidth);
+                        Debug.Log(component.preferredWidth);
+                        Debug.Log(component.flexibleWidth);
+
+
+                        Debug.Log(component.transform.localScale);
+                        Debug.Log(component.transform.lossyScale);
+
+
+                        _isLogged = true;
+
+                    }
+                    */
+
+
+                    Camera main = Camera.main;
+
+                    //component.fontSize = Mathf.Max(Mathf.Min(main.orthographicSize, 40f) * 10f / 4f,18f);
+
+                    float f = Mathf.Max((Mathf.Min(main.orthographicSize - 5f, 40f) / 8f)*0.035f,0.02f) ;
+
+                    component.transform.localScale = new Vector3(f,f,1f);
+
+
+
+                }
+
 
             }
 
