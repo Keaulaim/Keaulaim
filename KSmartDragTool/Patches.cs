@@ -100,7 +100,7 @@ namespace KSmartDragTool
 
         [HarmonyPatch(typeof(DragTool))]
         [HarmonyPatch("OnMouseMove")]
-        public class DragTool_OnMouseMove_Patch
+        public class DragTool_OnMouseMove_Patch 
         {
 
             public static void Postfix(Vector3 ___previousCursorPos, Vector3 ___downPos, ref Guid ___areaVisualizerText, bool ___dragging)
@@ -146,7 +146,6 @@ namespace KSmartDragTool
                 }
 
                 Patches._isMousePanning = Patches._panRight || Patches._panLeft || Patches._panUp || Patches._panDown ;
-
 
 
 
@@ -207,27 +206,7 @@ namespace KSmartDragTool
             }
         }
 
-        /*
-        [HarmonyPatch(typeof(DragTool))]
-        [HarmonyPatch("OnKeyUp")]
-        public class DragTool_OnKeyUp_Patch
-        {
-
-            public static void Prefix(KButtonEvent e)
-            {
-                
-                    Patches._panRight = false;
-                    Patches._panLeft = false;
-                    Patches._panUp = false;
-                    Patches._panDown = false;
-                    Patches._isMousePanning = false;
-                
-
-            }
-
-        }
-        */
-
+ 
 
         [HarmonyPatch(typeof(PlayerController))]
         [HarmonyPatch("StopDrag")]
@@ -305,28 +284,6 @@ namespace KSmartDragTool
                     // Changement de la police
                     LocText component = NameDisplayScreen.Instance.GetWorldText(areaVisText).GetComponent<LocText>();
 
-                    /*
-                    if(!_isLogged)
-                    {
-
-                        Debug.Log(component.minHeight);
-                        Debug.Log(component.maxHeight);
-                        Debug.Log(component.preferredHeight);
-                        Debug.Log(component.flexibleHeight);
-                        Debug.Log(component.minWidth);
-                        Debug.Log(component.maxWidth);
-                        Debug.Log(component.preferredWidth);
-                        Debug.Log(component.flexibleWidth);
-
-
-                        Debug.Log(component.transform.localScale);
-                        Debug.Log(component.transform.lossyScale);
-
-
-                        _isLogged = true;
-
-                    }
-                    */
 
 
                     Camera main = Camera.main;
