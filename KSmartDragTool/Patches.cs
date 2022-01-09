@@ -19,6 +19,7 @@ namespace KSmartDragTool
         public static bool _isLogged = false;
 
         public static Guid areaVisText;
+        public static int clampSize;
 
 
         [HarmonyPatch(typeof(DragTool))]
@@ -84,10 +85,8 @@ namespace KSmartDragTool
                     // Changement de la couleur 
                     LocText component = NameDisplayScreen.Instance.GetWorldText(___areaVisualizerText).GetComponent<LocText>();
 
-                    float H, S, V;
+                    component.color = new Color(1f,1f,1f);
 
-                    Color.RGBToHSV(component.color, out H, out S, out V);
-                    component.color = Color.HSVToRGB(H, S, V - 0.5f);
 
 
                 }
@@ -103,7 +102,7 @@ namespace KSmartDragTool
         public class DragTool_OnMouseMove_Patch 
         {
 
-            public static void Postfix(Vector3 ___previousCursorPos, Vector3 ___downPos, ref Guid ___areaVisualizerText, bool ___dragging)
+            public static void Postfix(Vector3 ___previousCursorPos, Vector3 ___downPos, ref Guid ___areaVisualizerText, bool ___dragging, SpriteRenderer ___areaVisualizerSpriteRenderer)
             {
 
 
@@ -160,6 +159,9 @@ namespace KSmartDragTool
 
                     LocText component = NameDisplayScreen.Instance.GetWorldText(___areaVisualizerText).GetComponent<LocText>();
 
+                    Vector2 clampVect = ___areaVisualizerSpriteRenderer.size;
+
+                    clampSize = Mathf.Min(Mathf.CeilToInt(Mathf.RoundToInt(clampVect.x) * 2 / 3), Mathf.RoundToInt(clampVect.y));
 
                     // Si le cadre est complêtement visible, aucune action
                     if (CameraController.Instance.IsVisiblePos(___downPos))
@@ -193,6 +195,10 @@ namespace KSmartDragTool
                     //Calcul du milieu
                     Vector2 input = (maxVisiblePoint + minVisiblePoint) * 0.5f;
 
+                    //Calcul du clamp
+                    clampVect = maxVisiblePoint - minVisiblePoint;
+
+                    clampSize = Mathf.Min(Mathf.CeilToInt(Mathf.RoundToInt(clampVect.x) * 2 / 3), Mathf.RoundToInt(clampVect.y));
 
                     //Recalage du texte
                     
@@ -290,7 +296,9 @@ namespace KSmartDragTool
 
                     //component.fontSize = Mathf.Max(Mathf.Min(main.orthographicSize, 40f) * 10f / 4f,18f);
 
-                    float f = Mathf.Max((Mathf.Min(main.orthographicSize - 5f, 40f) / 8f)*0.035f,0.02f) ;
+                    float clampf = Mathf.Min(clampSize * 10, main.orthographicSize);
+
+                    float f = Mathf.Clamp(clampf,8f, 60f)*0.0025f ;
 
                     component.transform.localScale = new Vector3(f,f,1f);
 

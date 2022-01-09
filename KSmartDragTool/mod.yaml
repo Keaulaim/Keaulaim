@@ -1,3 +1,3 @@
 title: "Smart Drag Tool"
-description: "Modify the drag tools behaviour, keeping the info text always visible and panning the cam when the mouse hit the screen border."
+description: "Modify the drag tools behaviour, keeping the info text always visible and panning the cam when the mouse hit the screen border. It also contains visual upgrade like adding contrast and adaptative size for the text."
 staticID: "ksmartdragtool" 
