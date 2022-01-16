@@ -153,7 +153,7 @@ namespace KSmartDragTool
 
                 areaVisText = ___areaVisualizerText;
 
-                if (___areaVisualizerText != Guid.Empty)
+                if (___areaVisualizerText != Guid.Empty && ___areaVisualizerSpriteRenderer != (SpriteRenderer) null)
                 {
                                         
 
